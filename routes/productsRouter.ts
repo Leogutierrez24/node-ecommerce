@@ -1,41 +1,45 @@
 import express, { Request, Response } from "express";
+import { ProductService } from "../services/productService";
+import { IProduct } from "../models/IProduct";
+
 const router = express.Router();
+const productService = new ProductService();
 
 router.get("/", (req: Request, res: Response) => {
-  const size = parseInt(req.query.size as string);
-  const limit = size || 10;
-  let products = [];
-  if (typeof limit === "number"){
-    for(let i = 0; i < limit; i++)
-      {
-        products.push({
-          name: "Product " + i,
-          price: 1500,
-        });
-      }
-      res.json(products);
-  } else
-  {
-    res.send("Not a valid query!!!");
-  }
-});
+    const products = productService.toList();
+    res.json(products);
+  });
 
 router.get("/:id", (req: Request, res: Response) => {
   const { id } = req.params;
-
-  res.json({
-    id,
-    name: "Keyboard",
-    price: 2400
-  });
+  const product = productService.findById(parseInt(id));
+  res.json(product);
 });
 
 router.post("/", (req: Request, res: Response) => {
   const body = req.body;
-  res.json({
+  res.status(201).json({
     message: "created",
     data: body,
-  })
+  });
+});
+
+router.patch("/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  const body = req.body;
+  res.json({
+    message: "updated",
+    data: body,
+    id,
+  });
+});
+
+router.delete("/:id", (req: Request, res: Response) => {
+  const { id } = req.params;
+  res.json({
+    message: "deleted",
+    id,
+  });
 });
 
 export default router;
