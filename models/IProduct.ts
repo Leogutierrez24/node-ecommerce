@@ -5,5 +5,5 @@ export interface IProduct
   id: number;
   name: string;
   price: number;
-  categories: ICategory[];
+  categories?: ICategory[];
 }
