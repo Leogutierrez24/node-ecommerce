@@ -1,20 +1,41 @@
+import { IProduct } from "../models/IProduct";
 import { IPurchase } from "../models/IPurchase";
-import { IServiceMapper } from "../models/IServiceMapper";
 
-
-export class purchaseService implements IServiceMapper<IPurchase>
+export class purchaseService
 {
-  create(name: string): IPurchase {
-    throw new Error("Method not implemented.");
+  private purchases: IPurchase[] = [];
+
+  private static instance: purchaseService;
+
+  private constructor() {  }
+
+  public static getInstance()
+  {
+    if (this.instance === null) this.instance = new purchaseService();
+    return this.instance;
   }
-  delete(id: number): IPurchase {
-    throw new Error("Method not implemented.");
+
+  public async create(products: IProduct[]): Promise<IPurchase> {
+    let newPurchase: IPurchase = {
+      id: Date.now(),
+      date: Date.toString(),
+      products: products,
+      total: products.reduce((total, product) => total + product.price, 0)
+    };
+    return newPurchase;
   }
-  update(id: number, changes: Partial<IPurchase>): IPurchase {
-    throw new Error("Method not implemented.");
+
+  public async findById(id: number): Promise<IPurchase>
+  {
+    let purchase: IPurchase;
+    let index = this.purchases.findIndex(purchase => purchase.id === id);
+    if (index !== -1) purchase = this.purchases[index];
+    else throw new Error("Purchase not found.");
+    return purchase;
   }
-  toList(): IPurchase[] {
-    throw new Error("Method not implemented.");
+
+  public async toList(): Promise<IPurchase[]> {
+    return this.purchases;
   }
 
 }

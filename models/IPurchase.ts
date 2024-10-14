@@ -3,7 +3,7 @@ import { IProduct } from "./IProduct";
 export interface IPurchase
 {
   id: number;
-  date: Date;
+  date: string;
   products: IProduct[];
   total: number;
 }

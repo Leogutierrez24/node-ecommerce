@@ -1,15 +1,15 @@
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
 
-export class ProductService {
-  private static instance: ProductService;
+export class productService {
+  private static instance: productService;
   public products: IProduct[] = [];
 
   private constructor() {
     this.generate();
   }
 
-  generate() {
+  private generate() {
     for (let i = 0; i < 100; i++) {
       this.products.push({
         id: Date.now(),
@@ -20,8 +20,8 @@ export class ProductService {
     }
   }
 
-  public static getInstance(): ProductService {
-    if (this.instance === null) this.instance = new ProductService();
+  public static getInstance(): productService {
+    if (this.instance === null) this.instance = new productService();
     return this.instance;
   }
 
@@ -38,6 +38,18 @@ export class ProductService {
 
   async toList() {
     return this.products;
+  }
+
+  public async listByCategory(categoryId: number): Promise<IProduct[]> {
+    let productsByCategory: IProduct[] = [];
+
+    this.products.forEach(product => {
+      if (product.categories.length > 0) {
+        if (product.categories.find(category => category.id === categoryId)) productsByCategory.push(product);
+      }
+    });
+
+    return productsByCategory;
   }
 
   async findById(id: number): Promise<IProduct | undefined> {
@@ -62,4 +74,6 @@ export class ProductService {
     if (index !== -1) this.products.splice(index, 1);
     else throw new Error("Product not found.");
   }
+
+
 }

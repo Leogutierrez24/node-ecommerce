@@ -1,19 +1,49 @@
-import { IServiceMapper } from "../models/IServiceMapper";
 import { IUser } from "../models/IUser";
 
-export class userService implements IServiceMapper<IUser>
-{
-  create(name: string): IUser {
-    throw new Error("Method not implemented.");
+export class userService {
+  private users: IUser[] = []
+
+  private static instance: userService;
+
+  private constructor() {
+    this.initilize();
   }
-  delete(id: number): IUser {
-    throw new Error("Method not implemented.");
+
+  public static getInstance() {
+    if (this.instance == null) this.instance = new userService();
+    return this.instance;
   }
-  update(id: number, changes: Partial<IUser>): IUser {
-    throw new Error("Method not implemented.");
+
+  private initilize() {
+    let newUser: IUser = { id: Date.now(), user: "admin", password: "admin", purchases: [] };
+    this.users.push(newUser);
   }
-  toList(): IUser[] {
-    throw new Error("Method not implemented.");
+
+  public async create(username: string, password: string): Promise<IUser> {
+    let newUser: IUser = {
+      id: Date.now(),
+      user: username,
+      password: password,
+      purchases: [],
+    };
+    this.users.push(newUser);
+    return newUser;
+  }
+
+  public async delete(id: number) {
+    let index: number = this.users.findIndex(user => user.id === id);
+    if (index !== -1) this.users.splice(index, 1);
+    else throw new Error("User not found.");
+  }
+
+  public async changePassword(id: number, newPassword: string) {
+    let index: number = this.users.findIndex(user => user.id === id);
+    if (index !== -1) this.users[index].password = newPassword;
+    else throw new Error("User not found.");
+  }
+
+  public async toList(): Promise<IUser[]> {
+    return this.users;
   }
 
 }
