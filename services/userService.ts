@@ -9,8 +9,8 @@ export class userService {
     this.initilize();
   }
 
-  public static getInstance() {
-    if (this.instance == null) this.instance = new userService();
+  public static getInstance(): userService {
+    if (this.instance === null || this.instance === undefined) this.instance = new userService();
     return this.instance;
   }
 

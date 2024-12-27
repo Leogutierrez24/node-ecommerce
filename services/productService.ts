@@ -3,13 +3,18 @@ import { IProduct } from "../models/IProduct";
 
 export class productService {
   private static instance: productService;
-  public products: IProduct[] = [];
+  private products: IProduct[] = [];
 
   private constructor() {
-    this.generate();
+    this.initialize();
   }
 
-  private generate() {
+  public static getInstance(): productService {
+    if (this.instance === null || this.instance === undefined) this.instance = new productService();
+    return this.instance;
+  }
+
+  private initialize(): void {
     for (let i = 0; i < 100; i++) {
       this.products.push({
         id: Date.now(),
@@ -20,12 +25,7 @@ export class productService {
     }
   }
 
-  public static getInstance(): productService {
-    if (this.instance === null) this.instance = new productService();
-    return this.instance;
-  }
-
-  async create(name: string, price: number, categories: ICategory[]): Promise<IProduct> {
+  public async create(name: string, price: number, categories: ICategory[]): Promise<IProduct> {
     let newProduct: IProduct = {
       id: Date.now(),
       name: name,
@@ -36,7 +36,7 @@ export class productService {
     return newProduct;
   }
 
-  async toList() {
+  public async toList() {
     return this.products;
   }
 
@@ -52,13 +52,13 @@ export class productService {
     return productsByCategory;
   }
 
-  async findById(id: number): Promise<IProduct | undefined> {
+  public async findById(id: number): Promise<IProduct | undefined> {
     let product: IProduct | undefined = this.products.find(product => product.id === id);
     if (!product) throw new Error("Product not found.");
     return product;
   }
 
-  async update(id: number, changes: Partial<IProduct>) {
+  public async update(id: number, changes: Partial<IProduct>) {
     let index = this.products.findIndex(product => product.id === id);
     if (index !== -1) {
       let product = this.products[index];
@@ -69,11 +69,9 @@ export class productService {
     } else throw new Error("Product not found.");
   }
 
-  async delete(id: number){
+  public async delete(id: number){
     let index = this.products.findIndex(product => product.id === id);
     if (index !== -1) this.products.splice(index, 1);
     else throw new Error("Product not found.");
   }
-
-
 }

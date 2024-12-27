@@ -2,6 +2,8 @@ import express, { Request, Response } from "express";
 import { productService } from "../services/productService";
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
+import { validationHandler } from "../middlewares/validationHandler";
+import { createProductSchema, getProductSchema, updateProductSchema } from "../schemas/productSchema";
 
 const router = express.Router();
 const service = productService.getInstance();
@@ -11,7 +13,7 @@ router.get("/", async (req: Request, res: Response) => {
   res.json(products);
 });
 
-router.get("/:id", async (req: Request, res: Response) => {
+router.get("/:id", validationHandler(getProductSchema, "params"), async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const product = await service.findById(parseInt(id));

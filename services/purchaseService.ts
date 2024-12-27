@@ -11,7 +11,7 @@ export class purchaseService
 
   public static getInstance()
   {
-    if (this.instance === null) this.instance = new purchaseService();
+    if (this.instance === null || this.instance === undefined) this.instance = new purchaseService();
     return this.instance;
   }
 

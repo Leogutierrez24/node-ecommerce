@@ -11,9 +11,9 @@ export class categoryService
     this.initialize();
   }
 
-  static getInstance()
+  static getInstance(): categoryService
   {
-    if (this.instance == null) this.instance = new categoryService();
+    if (this.instance === null || this.instance === undefined) this.instance = new categoryService();
     return this.instance;
   }
 
