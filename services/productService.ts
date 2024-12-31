@@ -1,5 +1,6 @@
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
+import { v4 as uuidv4 } from "uuid";
 
 export class productService {
   private static instance: productService;
@@ -17,7 +18,7 @@ export class productService {
   private initialize(): void {
     for (let i = 0; i < 100; i++) {
       this.products.push({
-        id: Date.now(),
+        id: uuidv4(),
         name: "Product " + i,
         price: 1500,
         categories: [],
@@ -27,7 +28,7 @@ export class productService {
 
   public async create(name: string, price: number, categories: ICategory[]): Promise<IProduct> {
     let newProduct: IProduct = {
-      id: Date.now(),
+      id: uuidv4(),
       name: name,
       price: price,
       categories: categories
@@ -40,7 +41,7 @@ export class productService {
     return this.products;
   }
 
-  public async listByCategory(categoryId: number): Promise<IProduct[]> {
+  public async listByCategory(categoryId: string): Promise<IProduct[]> {
     let productsByCategory: IProduct[] = [];
 
     this.products.forEach(product => {
@@ -52,13 +53,13 @@ export class productService {
     return productsByCategory;
   }
 
-  public async findById(id: number): Promise<IProduct | undefined> {
+  public async findById(id: string): Promise<IProduct | undefined> {
     let product: IProduct | undefined = this.products.find(product => product.id === id);
     if (!product) throw new Error("Product not found.");
     return product;
   }
 
-  public async update(id: number, changes: Partial<IProduct>) {
+  public async update(id: string, changes: Partial<IProduct>) {
     let index = this.products.findIndex(product => product.id === id);
     if (index !== -1) {
       let product = this.products[index];
@@ -69,7 +70,7 @@ export class productService {
     } else throw new Error("Product not found.");
   }
 
-  public async delete(id: number){
+  public async delete(id: string){
     let index = this.products.findIndex(product => product.id === id);
     if (index !== -1) this.products.splice(index, 1);
     else throw new Error("Product not found.");

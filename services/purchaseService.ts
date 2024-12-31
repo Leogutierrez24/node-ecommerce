@@ -1,23 +1,21 @@
+import { ErrorPurchaseNotFound } from "../errors/ErrorPurchaseNotFound";
 import { IProduct } from "../models/IProduct";
 import { IPurchase } from "../models/IPurchase";
+import { v4 as uuidv4 } from "uuid";
 
-export class purchaseService
-{
-  private purchases: IPurchase[] = [];
-
+export class purchaseService {
   private static instance: purchaseService;
 
-  private constructor() {  }
+  private constructor() { }
 
-  public static getInstance()
-  {
+  public static getInstance() {
     if (this.instance === null || this.instance === undefined) this.instance = new purchaseService();
     return this.instance;
   }
 
   public async create(products: IProduct[]): Promise<IPurchase> {
     let newPurchase: IPurchase = {
-      id: Date.now(),
+      id: uuidv4(),
       date: Date.toString(),
       products: products,
       total: products.reduce((total, product) => total + product.price, 0)
@@ -25,17 +23,10 @@ export class purchaseService
     return newPurchase;
   }
 
-  public async findById(id: number): Promise<IPurchase>
-  {
-    let purchase: IPurchase;
-    let index = this.purchases.findIndex(purchase => purchase.id === id);
-    if (index !== -1) purchase = this.purchases[index];
-    else throw new Error("Purchase not found.");
-    return purchase;
-  }
-
-  public async toList(): Promise<IPurchase[]> {
-    return this.purchases;
+  public async findById(purchases: IPurchase[], id: string): Promise<IPurchase> {
+    let index = purchases.findIndex(purchase => purchase.id === id);
+    if (index !== -1) return purchases[index];
+    else throw new ErrorPurchaseNotFound();
   }
 
 }

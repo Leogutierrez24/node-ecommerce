@@ -1,4 +1,5 @@
 import { ICategory } from "../models/ICategory";
+import { v4 as uuidv4 } from "uuid";
 
 export class categoryService
 {
@@ -21,7 +22,7 @@ export class categoryService
   {
     for (let i = 0; i < 10; i++){
       let category: ICategory = {
-        id: Date.now(),
+        id: uuidv4(),
         name: "Category " + i,
       };
       this.categories.push(category);
@@ -31,14 +32,14 @@ export class categoryService
   public async create(name: string): Promise<ICategory>
   {
     let newCategory: ICategory = {
-      id: Date.now(),
+      id: uuidv4(),
       name: name,
     };
     this.categories.push(newCategory);
     return newCategory;
   }
 
-  public async delete(id: number): Promise<ICategory>
+  public async delete(id: string): Promise<ICategory>
   {
     let deletedCategory: ICategory[] = [];
     let index = this.categories.findIndex(category => category.id === id);
@@ -47,7 +48,7 @@ export class categoryService
     return deletedCategory[0];
   }
 
-  public async update(id: number, changes: string) {
+  public async update(id: string, changes: string) {
     let index = this.categories.findIndex(category => category.id === id);
     if (index !== -1) this.categories[index].name = changes;
     else throw new Error("Category not found.");
