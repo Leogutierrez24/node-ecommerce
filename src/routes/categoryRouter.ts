@@ -18,7 +18,6 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.post("/", validationHandler(createUpdateCategorySchema, "body"), async (req: Request, res: Response) => {
   const { name } = req.body;
-  if (!name) res.status(400).send("name is required.");
   try {
     let newCategory = await service.create(name);
     res.status(201).json(newCategory);
@@ -31,7 +30,6 @@ router.patch("/:id",
   validationHandler(getCategorySchema, "params"),
   validationHandler(createUpdateCategorySchema, "body"), async (req: Request, res: Response) => {
   const { id, name } = req.body;
-  if (!name) res.status(400).send("A new name is required.");
   try {
     let newCategory = await service.update(id, name);
     res.status(201).json(newCategory);

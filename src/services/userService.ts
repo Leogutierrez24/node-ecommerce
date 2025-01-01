@@ -1,3 +1,4 @@
+import { ErrorPasswordNotMatch } from "../errors/ErrorPasswordNotMatch";
 import { ErrorUserNotFound } from "../errors/ErrorUserNotFound";
 import { IUser } from "../models/IUser";
 import { v4 as uuidv4 } from "uuid";
@@ -17,7 +18,7 @@ export class userService {
   }
 
   private initilize() {
-    let newUser: IUser = { id: uuidv4(), user: "admin", password: "admin", purchases: [] };
+    let newUser: IUser = { id: "42ad95ca-27a9-452b-ba48-2a162224d360", user: "admin", password: "admin", purchases: [] };
     this.users.push(newUser);
   }
 
@@ -38,9 +39,12 @@ export class userService {
     else throw new ErrorUserNotFound();
   }
 
-  public async changePassword(id: string, newPassword: string) {
-    let index: number = this.users.findIndex(user => user.id === id);
-    if (index !== -1) this.users[index].password = newPassword;
+  public async changePassword(id: string, oldPassword: string, newPassword: string) {
+    const user = await this.findById(id);
+    if (user !== undefined) {
+      if (oldPassword === user.password) user.password = newPassword;
+      else throw new ErrorPasswordNotMatch();
+    }
     else throw new ErrorUserNotFound();
   }
 

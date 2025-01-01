@@ -37,9 +37,6 @@ router.get("/categories/:categoryId", async (req: Request, res: Response) => {
 
 router.post("/", validationHandler(createProductSchema, "body"), async (req: Request, res: Response) => {
   const { name, price, categories } = req.body;
-  /*if (!name) res.status(400).send("Name is required.");
-  else if (!price) res.status(400).send("Price is required.");
-  else if (!categories) res.status(400).send("A category is required.");*/
   try {
     let newProduct = await service.create(name, parseInt(price), categories as ICategory[]);
     res.status(201).json(newProduct);
