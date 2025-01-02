@@ -1,10 +1,21 @@
 import express, { Request, Response } from "express";
 import { routerApi } from "./routes/index";
 import { errorHandler, logErrors } from "./middlewares/errorHandler";
+import cors, { CorsOptions } from "cors";
+import helmet from "helmet";
+
 const app = express();
 const port = 3000;
 
 app.use(express.json());
+
+const whitelist: string[] = ["http://localhost:8080"];
+const options: CorsOptions = {
+  origin: whitelist
+};
+app.use(cors(options));
+
+app.use(helmet());
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hola, este es mi servidor en Express.");
