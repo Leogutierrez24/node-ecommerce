@@ -14,7 +14,6 @@ const options: CorsOptions = {
   origin: whitelist
 };
 app.use(cors(options));
-
 app.use(helmet());
 
 app.get("/", (req: Request, res: Response) => {
