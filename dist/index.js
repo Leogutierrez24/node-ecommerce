@@ -9,7 +9,7 @@ const errorHandler_1 = require("./middlewares/errorHandler");
 const cors_1 = __importDefault(require("cors"));
 const helmet_1 = __importDefault(require("helmet"));
 const app = (0, express_1.default)();
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.use(express_1.default.json());
 const whitelist = ["http://localhost:8080"];
 const options = {
@@ -27,5 +27,5 @@ app.get("/nueva-ruta", (req, res) => {
 app.use(errorHandler_1.logErrors);
 app.use(errorHandler_1.errorHandler);
 app.listen(port, () => {
-    console.log("Mi puerto: " + port);
+    console.log("Server running on port: " + port);
 });
