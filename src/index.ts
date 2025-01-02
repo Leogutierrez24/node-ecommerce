@@ -5,7 +5,7 @@ import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -31,6 +31,6 @@ app.use(logErrors);
 app.use(errorHandler);
 
 app.listen(port, () => {
-  console.log("Mi puerto: " + port);
+  console.log("Server running on port: " + port);
 });
 
