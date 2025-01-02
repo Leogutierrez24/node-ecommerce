@@ -16,11 +16,11 @@ const options: CorsOptions = {
 app.use(cors(options));
 app.use(helmet());
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/api", (req: Request, res: Response) => {
   res.send("Hola, este es mi servidor en Express.");
 });
 
-app.get("/nueva-ruta", (req: Request, res: Response) => {
+app.get("/api/nueva-ruta", (req: Request, res: Response) => {
   res.send("Soy un nuevo Endpoint");
 });
 

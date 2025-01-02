@@ -17,10 +17,10 @@ const options = {
 };
 app.use((0, cors_1.default)(options));
 app.use((0, helmet_1.default)());
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.send("Hola, este es mi servidor en Express.");
 });
-app.get("/nueva-ruta", (req, res) => {
+app.get("/api/nueva-ruta", (req, res) => {
     res.send("Soy un nuevo Endpoint");
 });
 (0, index_1.routerApi)(app);

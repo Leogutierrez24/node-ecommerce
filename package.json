@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
-    "start": "node dist/index.js",
+    "start": "node dist/api/index.js",
     "build": "npx tsc",
     "lint": "eslint"
   },
@@ -16,6 +15,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.21",
     "@types/joi": "^17.2.3",
+    "@types/cors": "^2.8.17",
     "eslint": "^9.10.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -24,7 +24,6 @@
     "uuid": "^11.0.3"
   },
   "dependencies": {
-    "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "helmet": "^8.0.0",
