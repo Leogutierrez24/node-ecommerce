@@ -1,9 +1,17 @@
+import { pool } from "../lib/postgres";
+
 export abstract class Mapper<T> {
-  public abstract Update(obj: T): Promise<void>;
+  public pool = pool;
 
-  public abstract Insert(obj: T): Promise<void>;
+  public constructor() {
+    this.pool.on("error", (error) => console.log(error));
+  }
 
-  public abstract Delete(id: number): Promise<void>;
+  public abstract update(obj: T): Promise<void>;
+
+  public abstract insert(obj: T): Promise<void>;
+
+  public abstract delete(id: number): Promise<void>;
 
   public abstract toList(): Promise<T[]>;
 }

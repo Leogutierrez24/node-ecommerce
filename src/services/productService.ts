@@ -1,10 +1,13 @@
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
 import { v4 as uuidv4 } from "uuid";
+import { productMP } from "../dal/productMP";
 
 export class productService {
   private static instance: productService;
   private products: IProduct[] = [];
+
+  private productMapper = new productMP();
 
   private constructor() {
     this.initialize();
@@ -37,8 +40,12 @@ export class productService {
     return newProduct;
   }
 
-  public async toList() {
+  /*public async toList() {
     return this.products;
+  }*/
+
+  public async toList() {
+    return this.productMapper.toList();
   }
 
   public async listByCategory(categoryId: string): Promise<IProduct[]> {

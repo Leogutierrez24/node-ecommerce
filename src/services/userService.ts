@@ -2,9 +2,12 @@ import { ErrorPasswordNotMatch } from "../errors/ErrorPasswordNotMatch";
 import { ErrorUserNotFound } from "../errors/ErrorUserNotFound";
 import { IUser } from "../models/IUser";
 import { v4 as uuidv4 } from "uuid";
+import { userMP } from "../dal/userMP";
 
 export class userService {
   private users: IUser[] = []
+
+  private userMapper = new userMP();
 
   private static instance: userService;
 
@@ -49,7 +52,7 @@ export class userService {
   }
 
   public async toList(): Promise<IUser[]> {
-    return this.users;
+    return this.userMapper.toList();
   }
 
   public async findById(id: string): Promise<IUser> {
