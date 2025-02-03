@@ -10,4 +10,4 @@ export function routerApi(app: Express)
   router.use("/products", productsRouter);
   router.use("/categories", categoryRouter);
   router.use("/user", usersRouter);
-}
+};

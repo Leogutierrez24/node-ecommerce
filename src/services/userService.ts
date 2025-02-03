@@ -1,10 +1,13 @@
 import { ErrorPasswordNotMatch } from "../errors/ErrorPasswordNotMatch";
-import { ErrorUserNotFound } from "../errors/ErrorUserNotFound";
 import { IUser } from "../models/IUser";
 import { v4 as uuidv4 } from "uuid";
+import { userMP } from "../dal/userMP";
+import { NotFoundError } from "../errors/NotFoundError";
 
 export class userService {
   private users: IUser[] = []
+
+  private userMapper = new userMP();
 
   private static instance: userService;
 
@@ -36,7 +39,7 @@ export class userService {
   public async delete(id: string) {
     let index: number = this.users.findIndex(user => user.id === id);
     if (index !== -1) this.users.splice(index, 1);
-    else throw new ErrorUserNotFound();
+    else throw new NotFoundError("User not found with ID: " + id);
   }
 
   public async changePassword(id: string, oldPassword: string, newPassword: string) {
@@ -45,17 +48,16 @@ export class userService {
       if (oldPassword === user.password) user.password = newPassword;
       else throw new ErrorPasswordNotMatch();
     }
-    else throw new ErrorUserNotFound();
+    else throw new NotFoundError("User not found with ID: " + id);
   }
 
   public async toList(): Promise<IUser[]> {
-    return this.users;
+    return this.userMapper.toList();
   }
 
   public async findById(id: string): Promise<IUser> {
     let index: number = this.users.findIndex(user => user.id === id);
     if (index !== -1) return this.users[index];
-    else throw new ErrorUserNotFound();
+    else throw new NotFoundError("User not found with ID: " + id);
   }
-
 }

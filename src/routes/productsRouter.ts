@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { productService } from "../services/productService";
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
@@ -9,69 +9,76 @@ const router = express.Router();
 const service = productService.getInstance();
 
 router.get("/", async (req: Request, res: Response) => {
-  const products = await service.toList();
-  res.json(products);
-});
-
-router.get("/:id", validationHandler(getProductSchema, "params"), async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
-    const product = await service.findById(id);
-    res.status(200).json(product);
-  } catch (err) {
+    const products = await service.toList();
+    res.status(200).json(products);
+  } catch (error) {
     res.status(404).json({
-      message: "Product not found."
+      message: "Failed to fetch products from database."
     });
   }
 });
 
-router.get("/categories/:categoryId", async (req: Request, res: Response) => {
+router.get("/:id", validationHandler(getProductSchema, "params"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const product = await service.findById(parseInt(id));
+      res.status(200).json(product);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+router.get("/categories/:categoryId", async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
     const products = await service.listByCategory(id);
     res.status(200).json(products);
   } catch (error) {
-    res.status(400).send("An error occurred.");
+    next(error);
   }
 });
 
-router.post("/", validationHandler(createProductSchema, "body"), async (req: Request, res: Response) => {
-  const { name, price, categories } = req.body;
-  try {
-    let newProduct = await service.create(name, parseInt(price), categories as ICategory[]);
-    res.status(201).json(newProduct);
-  } catch (error) {
-    res.status(400).send("An error occurred.");
-  }
-});
+router.post("/", validationHandler(createProductSchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name, price, categories } = req.body;
+      const newProduct = await service.create(name, parseInt(price), categories as ICategory[]);
+      res.status(201).json(newProduct);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 router.patch("/:id",
   validationHandler(getProductSchema, "params"),
   validationHandler(updateProductSchema, "body"),
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const body = req.body as Partial<IProduct>;
-      await service.update(id, body);
+      await service.update(Number.parseInt(id), body);
       res.status(201).json({
         message: `Product with ID: ${id} was updated.`
       });
-    } catch (err) {
-      res.status(400).send("An error occurred.");
+    } catch (error) {
+      next(error);
     }
   });
 
-router.delete("/:id", validationHandler(getProductSchema, "params"), async (req: Request, res: Response) => {
-  try {
-    const { id } = req.params;
-    await service.delete(id);
-    res.status(201).json({
-      message: `Product with ID: ${id} was deleted.`,
-      id,
-    });
-  } catch (err) {
-    res.status(404).send("Product not found.");
-  }
-});
+router.delete("/:id", validationHandler(getProductSchema, "params"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      await service.delete(Number.parseInt(id));
+      res.status(201).json({
+        message: `Product with ID: ${id} was deleted.`,
+        id,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
 
 export default router;

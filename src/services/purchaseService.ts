@@ -1,4 +1,4 @@
-import { ErrorPurchaseNotFound } from "../errors/ErrorPurchaseNotFound";
+import { NotFoundError } from "../errors/NotFoundError";
 import { IProduct } from "../models/IProduct";
 import { IPurchase } from "../models/IPurchase";
 import { v4 as uuidv4 } from "uuid";
@@ -26,7 +26,7 @@ export class purchaseService {
   public async findById(purchases: IPurchase[], id: string): Promise<IPurchase> {
     let index = purchases.findIndex(purchase => purchase.id === id);
     if (index !== -1) return purchases[index];
-    else throw new ErrorPurchaseNotFound();
+    else throw new NotFoundError("Purchase not found with ID: " + id);
   }
 
 }
