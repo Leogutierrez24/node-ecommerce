@@ -3,15 +3,17 @@ import { IUser } from "../models/IUser";
 // import { getConnection } from "../lib/postgres";
 
 export class userMP extends Mapper<IUser> {
-  public async update(obj: IUser) {
+  public update(id: number, obj: Partial<IUser>): Promise<number | null> {
+    throw new Error("Method not implemented.");
+  }
+  public insert(obj: IUser): Promise<number | null> {
+    throw new Error("Method not implemented.");
+  }
+  public getById(id: number): Promise<IUser | null> {
     throw new Error("Method not implemented.");
   }
 
-  public async insert(obj: IUser) {
-    throw new Error("Method not implemented.");
-  }
-
-  public async delete(id: number) {
+  public async delete(id: number): Promise<number | null> {
     throw new Error("Method not implemented.");
   }
 

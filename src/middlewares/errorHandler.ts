@@ -1,16 +1,17 @@
 import { NextFunction, Request, Response } from "express";
+import { NotFoundError } from "../errors/NotFoundError";
+import { DatabaseError } from "../errors/DatabaseError";
 
-export function logErrors(err: any, req: Request, res: Response, next: NextFunction) {
-  console.error(err);
-  next(err);
-}
+export function errorHandler(error: Error, req: Request, res: Response, next: NextFunction) {
+  console.error(`[ERROR] ${error.name}: ${error.message}`);
 
-export function errorHandler(err: any, req: Request, res: Response, next: NextFunction)
-{
-  res.status(500).json(
-    {
-      message: err.message,
-      stack: err.stack,
-    }
-  )
+  if (error instanceof NotFoundError) {
+    return res.status(404).json({ error: error.message });
+  }
+
+  if (error instanceof DatabaseError) {
+    return res.status(500).json({ error: "Internal database error" });
+  }
+
+  return res.status(500).json({ error: "Something went wrong" });
 }

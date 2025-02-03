@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { routerApi } from "./routes/index";
-import { errorHandler, logErrors } from "./middlewares/errorHandler";
+import { errorHandler } from "./middlewares/errorHandler";
 import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
 
@@ -26,7 +26,6 @@ app.get("/api/nueva-ruta", (req: Request, res: Response) => {
 
 routerApi(app);
 
-app.use(logErrors);
 app.use(errorHandler);
 
 app.listen(port, () => {

@@ -1,85 +1,61 @@
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
-import { v4 as uuidv4 } from "uuid";
 import { productMP } from "../dal/productMP";
+import { NotFoundError } from "../errors/NotFoundError";
+import { DatabaseError } from "../errors/DatabaseError";
 
 export class productService {
   private static instance: productService;
-  private products: IProduct[] = [];
 
   private productMapper = new productMP();
 
-  private constructor() {
-    this.initialize();
-  }
+  private constructor() { }
 
   public static getInstance(): productService {
     if (this.instance === null || this.instance === undefined) this.instance = new productService();
     return this.instance;
   }
 
-  private initialize(): void {
-    for (let i = 0; i < 100; i++) {
-      this.products.push({
-        id: uuidv4(),
-        name: "Product " + i,
-        price: 1500,
-        categories: [],
-      });
-    }
+  public async listByCategory(categoryId: string): Promise<void> {
+
   }
 
-  public async create(name: string, price: number, categories: ICategory[]): Promise<IProduct> {
+  public async findById(id: number) {
+    const product = await this.productMapper.getById(id);
+    if (product) return product;
+    else throw new NotFoundError("Product not found with ID: " + id);
+  }
+
+  public async create(name: string, price: number, categories: ICategory[] = []): Promise<IProduct> {
     let newProduct: IProduct = {
-      id: uuidv4(),
       name: name,
       price: price,
       categories: categories
-    }
-    this.products.push(newProduct);
-    return newProduct;
+    };
+    let result: number | null = await this.productMapper.insert(newProduct);
+    if (result && result !== 0) return newProduct;
+    else throw new DatabaseError("The product creation has failed");
   }
-
-  /*public async toList() {
-    return this.products;
-  }*/
 
   public async toList() {
-    return this.productMapper.toList();
+    const products = await this.productMapper.toList();
+    if (!products) throw new DatabaseError("Failed to fetch the products from database");
+    else return products;
   }
 
-  public async listByCategory(categoryId: string): Promise<IProduct[]> {
-    let productsByCategory: IProduct[] = [];
-
-    this.products.forEach(product => {
-      if (product.categories.length > 0) {
-        if (product.categories.find(category => category.id === categoryId)) productsByCategory.push(product);
-      }
-    });
-
-    return productsByCategory;
+  public async update(id: number, changes: Partial<IProduct>) {
+    let productExists = await this.findById(id);
+    if (productExists) {
+      const result = await this.productMapper.update(id, changes);
+      if (result && result === 0) throw new Error("It was not possible to update.");
+    }
   }
 
-  public async findById(id: string): Promise<IProduct | undefined> {
-    let product: IProduct | undefined = this.products.find(product => product.id === id);
-    if (!product) throw new Error("Product not found.");
-    return product;
-  }
-
-  public async update(id: string, changes: Partial<IProduct>) {
-    let index = this.products.findIndex(product => product.id === id);
-    if (index !== -1) {
-      let product = this.products[index];
-      this.products[index] = {
-        ...product,
-        ...changes
-      };
-    } else throw new Error("Product not found.");
-  }
-
-  public async delete(id: string){
-    let index = this.products.findIndex(product => product.id === id);
-    if (index !== -1) this.products.splice(index, 1);
-    else throw new Error("Product not found.");
+  public async delete(id: number) {
+    const productExists = await this.productMapper.getById(id);
+    if (productExists) {
+      const result = await this.productMapper.delete(id);
+      if (result === 0) throw new DatabaseError("Failed to delete product with ID:" + id);
+    } else throw new NotFoundError("Product not found with ID: " + id);
   }
 }
