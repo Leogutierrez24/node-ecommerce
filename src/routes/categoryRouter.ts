@@ -1,51 +1,55 @@
-import express, { Request, Response } from "express";
-import { categoryService } from "../services/categoryService";
+import express, { NextFunction, Request, Response } from "express";
+import { CategoryService } from "../services/CategoryService";
 import { ICategory } from "../models/ICategory";
 import { createUpdateCategorySchema, getCategorySchema } from "../schemas/categorySchema";
 import { validationHandler } from "../middlewares/validationHandler";
 
 const router = express.Router();
-const service = categoryService.getInstance();
+const service = CategoryService.getInstance();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response, next: NextFunction) => {
   try {
     let categories: ICategory[] = await service.toList();
     res.status(200).json(categories);
   } catch (error) {
-    res.status(400).send("Something went wrong");
+    next(error);
   }
 });
 
-router.post("/", validationHandler(createUpdateCategorySchema, "body"), async (req: Request, res: Response) => {
-  const { name } = req.body;
-  try {
-    let newCategory = await service.create(name);
-    res.status(201).json(newCategory);
-  } catch (error) {
-    res.status(400).send("Something went wrong.");
-  }
-});
+router.post("/", validationHandler(createUpdateCategorySchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { name } = req.body;
+      let newCategory = await service.create(name);
+      res.status(201).json(newCategory);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 router.patch("/:id",
   validationHandler(getCategorySchema, "params"),
-  validationHandler(createUpdateCategorySchema, "body"), async (req: Request, res: Response) => {
-  const { id, name } = req.body;
-  try {
-    let newCategory = await service.update(id, name);
-    res.status(201).json(newCategory);
-  } catch (error) {
-    res.status(400).send("Something went wrong.");
-  }
-});
+  validationHandler(createUpdateCategorySchema, "body"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      const { name } = req.body;
+      await service.update(Number.parseInt(id), name);
+      res.status(201).json({ message: `Category with ID: ${id} was updated.` });
+    } catch (error) {
+      next(error);
+    }
+  });
 
-router.delete("/:id", validationHandler(getCategorySchema, "params"), async (req: Request, res: Response) => {
-  const { id } = req.body;
-  try {
-    let deletedCategory = await service.delete(id);
-    res.status(201).send(`Category: ${deletedCategory.name} was deleted succesfully.`);
-  } catch (error) {
-    res.status(400).send("Something went wrong.");
-  }
-});
+router.delete("/:id", validationHandler(getCategorySchema, "params"),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      await service.delete(Number.parseInt(id));
+      res.status(201).send(`Category with ID: ${id} was deleted.`);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 export default router;

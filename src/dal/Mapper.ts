@@ -15,5 +15,5 @@ export abstract class Mapper<T> {
 
   public abstract toList(): Promise<T[]>;
 
-  public abstract getById(id: number): Promise<T | null>;
+  public abstract getById(id: number): Promise<T | undefined>;
 }

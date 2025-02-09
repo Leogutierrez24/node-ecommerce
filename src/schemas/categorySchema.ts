@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const id = Joi.string().uuid();
+const id = Joi.number();
 const name = Joi.string().alphanum().min(3).max(30);
 
 export const createUpdateCategorySchema = Joi.object({

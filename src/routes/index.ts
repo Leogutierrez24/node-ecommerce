@@ -1,7 +1,7 @@
 import express, { Express } from "express";
-import categoryRouter from "./categoryRouter";
 import productsRouter from "./productsRouter";
 import usersRouter from "./usersRouter";
+import categoryRouter from "./categoryRouter";
 
 export function routerApi(app: Express)
 {

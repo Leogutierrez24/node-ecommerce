@@ -4,21 +4,21 @@ import { productMP } from "../dal/productMP";
 import { NotFoundError } from "../errors/NotFoundError";
 import { DatabaseError } from "../errors/DatabaseError";
 
-export class productService {
-  private static instance: productService;
+export class ProductService {
+  private static instance: ProductService;
 
   private productMapper = new productMP();
 
   private constructor() { }
 
-  public static getInstance(): productService {
-    if (this.instance === null || this.instance === undefined) this.instance = new productService();
+  public static getInstance(): ProductService {
+    if (this.instance === null || this.instance === undefined) this.instance = new ProductService();
     return this.instance;
   }
 
-  public async listByCategory(categoryId: string): Promise<void> {
+  /*public async listByCategory(categoryId: string): Promise<void> {
 
-  }
+  }*/
 
   public async findById(id: number) {
     const product = await this.productMapper.getById(id);
@@ -56,6 +56,6 @@ export class productService {
     if (productExists) {
       const result = await this.productMapper.delete(id);
       if (result === 0) throw new DatabaseError("Failed to delete product with ID:" + id);
-    } else throw new NotFoundError("Product not found with ID: " + id);
+    }
   }
 }

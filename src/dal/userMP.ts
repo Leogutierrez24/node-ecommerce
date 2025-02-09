@@ -9,7 +9,7 @@ export class userMP extends Mapper<IUser> {
   public insert(obj: IUser): Promise<number | null> {
     throw new Error("Method not implemented.");
   }
-  public getById(id: number): Promise<IUser | null> {
+  public getById(id: number): Promise<IUser | undefined> {
     throw new Error("Method not implemented.");
   }
 

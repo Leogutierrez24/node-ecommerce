@@ -1,13 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
-import { userService } from "../services/userService";
-import { purchaseService } from "../services/purchaseService";
-import { ErrorPasswordNotMatch } from "../errors/ErrorPasswordNotMatch";
+import { UserService } from "../services/UserService";
+import { purchaseService } from "../services/PurchaseService";
 import { validationHandler } from "../middlewares/validationHandler";
 import { createUserSchema, getUserSchema, updatePasswordSchema } from "../schemas/userSchema";
 import { getPurchaseSchema } from "../schemas/purchaseSchema";
 
 const router = express.Router();
-const service = userService.getInstance();
+const service = UserService.getInstance();
 const purchasesService = purchaseService.getInstance();
 
 router.get("/:id", validationHandler(getUserSchema, "params"),

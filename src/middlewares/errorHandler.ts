@@ -10,8 +10,8 @@ export function errorHandler(error: Error, req: Request, res: Response, next: Ne
   }
 
   if (error instanceof DatabaseError) {
-    return res.status(500).json({ error: "Internal database error" });
+    return res.status(500).json({ error: "Internal database error." });
   }
 
-  return res.status(500).json({ error: "Something went wrong" });
+  return res.status(500).json({ error: "Something went wrong." });
 }

@@ -1,12 +1,12 @@
 import express, { NextFunction, Request, Response } from "express";
-import { productService } from "../services/productService";
+import { ProductService } from "../services/ProductService";
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
 import { validationHandler } from "../middlewares/validationHandler";
 import { createProductSchema, getProductSchema, updateProductSchema } from "../schemas/productSchema";
 
 const router = express.Router();
-const service = productService.getInstance();
+const service = ProductService.getInstance();
 
 router.get("/", async (req: Request, res: Response) => {
   try {
@@ -31,13 +31,13 @@ router.get("/:id", validationHandler(getProductSchema, "params"),
   });
 
 router.get("/categories/:categoryId", async (req: Request, res: Response, next: NextFunction) => {
-  try {
+  /*try {
     const { id } = req.params;
     const products = await service.listByCategory(id);
     res.status(200).json(products);
   } catch (error) {
     next(error);
-  }
+  }*/
 });
 
 router.post("/", validationHandler(createProductSchema, "body"),

@@ -24,28 +24,30 @@ export class productMP extends Mapper<IProduct> {
     return data.rowCount;
   }
 
-  public async getById(id: number): Promise<IProduct> {
+  public async getById(id: number): Promise<IProduct | undefined> {
     const query = "SELECT p.id_product, p.name AS product_name, p.price, c.id_category, c.name AS category_name FROM product p LEFT JOIN category_products cp ON cp.id_product = p.id_product LEFT JOIN category c ON c.id_category = cp.id_category WHERE p.id_product = $1;";
-    const data = (await this.pool.query(query, [id])).rows[0];
-    let product: IProduct = {
-        id: data.id_product,
-        name: data.product_name,
-        price: data.price,
+    const data = (await this.pool.query(query, [id])).rows;
+    if (data.length > 0) {
+      let product: IProduct = {
+        id: data[0].id_product,
+        name: data[0].product_name,
+        price: data[0].price,
         categories: []
       };
 
-      if (data.id_category) {
+      if (data[0].id_category) {
         product!.categories.push({
-          id: data.id_category,
-          name: data.category_name
+          id: data[0].id_category,
+          name: data[0].category_name
         });
       }
 
-    return product;
+      return product;
+    } else return undefined;
   }
 
   public async toList(): Promise<IProduct[]> {
-    const query = "SELECT product.id_product, product.name AS product_name, product.price, category.id_category, category.name AS category_name FROM product LEFT JOIN category_products cp ON cp.id_product = product.id_product LEFT JOIN category ON category.id_category = cp.id_category;";
+    const query = "SELECT product.id_product, product.name AS product_name, product.price, category.id_category, category.name AS category_name FROM product LEFT JOIN category_products cp ON cp.id_product = product.id_product LEFT JOIN category ON category.id_category = cp.id_category ORDER BY category.id_category;";
     const data = await this.pool.query(query);
     const products = this.mapProducts(data.rows);
     return products;

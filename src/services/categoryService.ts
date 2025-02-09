@@ -1,61 +1,57 @@
+import { CategoryMP } from "../dal/CategoryMP";
+import { DatabaseError } from "../errors/DatabaseError";
+import { NotFoundError } from "../errors/NotFoundError";
 import { ICategory } from "../models/ICategory";
-import { v4 as uuidv4 } from "uuid";
 
-export class categoryService
-{
-  private static instance: categoryService;
+export class CategoryService {
+  private static instance: CategoryService;
 
-  private categories: ICategory[] = [];
+  private mapper: CategoryMP;
 
-  private constructor()
-  {
-    this.initialize();
+  private constructor() {
+    this.mapper = new CategoryMP();
   }
 
-  static getInstance(): categoryService
-  {
-    if (this.instance === null || this.instance === undefined) this.instance = new categoryService();
+  static getInstance(): CategoryService {
+    if (this.instance === null || this.instance === undefined) this.instance = new CategoryService();
     return this.instance;
   }
 
-  private initialize(): void
-  {
-    for (let i = 0; i < 10; i++){
-      let category: ICategory = {
-        id: uuidv4(),
-        name: "Category " + i,
-      };
-      this.categories.push(category);
+  public async create(name: string): Promise<ICategory> {
+    let newCategory: ICategory = {
+      name: name,
+    };
+    const result = await this.mapper.insert(newCategory);
+    if(result && result !== 0) return newCategory;
+    else throw new DatabaseError("The category creation has failed.");
+  }
+
+  public async delete(id: number) {
+    const categoryExists = await this.getById(id);
+    if (categoryExists) {
+      const result = await this.mapper.delete(id);
+      if (result === 0) throw new DatabaseError("Failed to delete category with ID:" + id);
+      else return id;
     }
   }
 
-  public async create(name: string): Promise<ICategory>
-  {
-    let newCategory: ICategory = {
-      id: uuidv4(),
-      name: name,
-    };
-    this.categories.push(newCategory);
-    return newCategory;
+  public async update(id: number, changes: string) {
+    const categoryExists = await this.getById(id);
+    if (categoryExists) {
+      const result = await this.mapper.updateName(id, changes);
+      if (result && result === 0) throw new DatabaseError("It was not possible to update.");
+    }
   }
 
-  public async delete(id: string): Promise<ICategory>
-  {
-    let deletedCategory: ICategory[] = [];
-    let index = this.categories.findIndex(category => category.id === id);
-    if (index !== -1) deletedCategory = this.categories.splice(index, 1);
-    else throw new Error("Category not found");
-    return deletedCategory[0];
+  public async toList(): Promise<ICategory[]> {
+    const result = await this.mapper.toList();
+    if(result) return result;
+    else throw new DatabaseError("Failed to fetch categories from database.");
   }
 
-  public async update(id: string, changes: string) {
-    let index = this.categories.findIndex(category => category.id === id);
-    if (index !== -1) this.categories[index].name = changes;
-    else throw new Error("Category not found.");
-  }
-
-  public async toList(): Promise<ICategory[]>
-  {
-    return this.categories;
+  public async getById(id: number) {
+    const category = await this.mapper.getById(id);
+    if (category && category !== undefined) return category;
+    else throw new NotFoundError("Category not founded with ID: " + id);
   }
 }
