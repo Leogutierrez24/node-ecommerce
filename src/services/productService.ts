@@ -1,13 +1,13 @@
 import { ICategory } from "../models/ICategory";
 import { IProduct } from "../models/IProduct";
-import { productMP } from "../dal/productMP";
+import { ProductMP } from "../dal/ProductMP";
 import { NotFoundError } from "../errors/NotFoundError";
 import { DatabaseError } from "../errors/DatabaseError";
 
 export class ProductService {
   private static instance: ProductService;
 
-  private productMapper = new productMP();
+  private productMapper = new ProductMP();
 
   private constructor() { }
 
@@ -34,12 +34,12 @@ export class ProductService {
     };
     let result: number | null = await this.productMapper.insert(newProduct);
     if (result && result !== 0) return newProduct;
-    else throw new DatabaseError("The product creation has failed");
+    else throw new DatabaseError("The product creation has failed.");
   }
 
   public async toList() {
     const products = await this.productMapper.toList();
-    if (!products) throw new DatabaseError("Failed to fetch the products from database");
+    if (!products) throw new DatabaseError("Failed to fetch the products from database.");
     else return products;
   }
 

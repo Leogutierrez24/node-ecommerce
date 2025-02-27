@@ -1,7 +1,7 @@
 import { IProduct } from "../models/IProduct";
 import { Mapper } from "./Mapper";
 
-export class productMP extends Mapper<IProduct> {
+export class ProductMP extends Mapper<IProduct> {
   public async update(id: number, obj: Partial<IProduct>): Promise<number | null> {
     const queryData = Object.entries(obj).map(([key, value]) => {
       return `${key} = ${value}`;
