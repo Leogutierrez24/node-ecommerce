@@ -1,32 +1,45 @@
 import { NotFoundError } from "../errors/NotFoundError";
+import { DatabaseError } from "../errors/DatabaseError";
 import { IProduct } from "../models/IProduct";
 import { IPurchase } from "../models/IPurchase";
-import { v4 as uuidv4 } from "uuid";
+import { PurchaseMP } from "../dal/PurchaseMP";
 
 export class purchaseService {
   private static instance: purchaseService;
 
-  private constructor() { }
+  private mapper: PurchaseMP;
+
+  private constructor() {
+    this.mapper = new PurchaseMP();
+  }
 
   public static getInstance() {
     if (this.instance === null || this.instance === undefined) this.instance = new purchaseService();
     return this.instance;
   }
 
-  public async create(products: IProduct[]): Promise<IPurchase> {
+  public async create(products: IProduct[]): Promise<number | null> {
     let newPurchase: IPurchase = {
-      id: uuidv4(),
       date: Date.toString(),
       products: products,
       total: products.reduce((total, product) => total + product.price, 0)
     };
-    return newPurchase;
+    const result = await this.mapper.insert(newPurchase);
+    if (result && result === 0) throw new DatabaseError("The purchase creation has failed.");
+    else return result;
   }
 
-  public async findById(purchases: IPurchase[], id: string): Promise<IPurchase> {
-    let index = purchases.findIndex(purchase => purchase.id === id);
-    if (index !== -1) return purchases[index];
-    else throw new NotFoundError("Purchase not found with ID: " + id);
+  public async findById(id: number): Promise<IPurchase> {
+    const purchaseExists = await this.mapper.getById(id);
+    if (purchaseExists) return purchaseExists;
+    else throw new NotFoundError(`Purchase not found with ID: ${id}.`);
+  }
+
+  public async getAllByUser(userID: number): Promise<IPurchase[]> {
+    const purchases = await this.mapper.getByUser(userID);
+    if (purchases) {
+
+    }
   }
 
 }
