@@ -10,3 +10,8 @@ export const createUpdateCategorySchema = Joi.object({
 export const getCategorySchema = Joi.object({
   id: id.required(),
 });
+
+export const categorySchema = Joi.object({
+  id: id.required(),
+  name: name.required()
+});

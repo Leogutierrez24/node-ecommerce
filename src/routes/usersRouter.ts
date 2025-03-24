@@ -1,13 +1,11 @@
 import express, { NextFunction, Request, Response } from "express";
 import { UserService } from "../services/UserService";
-import { purchaseService } from "../services/PurchaseService";
+import { PurchaseService } from "../services/PurchaseService";
 import { validationHandler } from "../middlewares/validationHandler";
 import { createUserSchema, getUserSchema, updatePasswordSchema } from "../schemas/userSchema";
-import { getPurchaseSchema } from "../schemas/purchaseSchema";
 
 const router = express.Router();
 const service = UserService.getInstance();
-const purchasesService = purchaseService.getInstance();
 
 router.get("/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -48,33 +46,19 @@ router.post("/",
   }
 );
 
-router.patch("/:userId",
+router.patch("/:id",
   validationHandler(getUserSchema, "params"),
   validationHandler(updatePasswordSchema, "body"),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { userId } = req.params;
+      const { id } = req.params;
       const { newPassword, actualPassword } = req.body;
-      const user = await service.findById(Number.parseInt(userId));
+      const user = await service.findById(Number.parseInt(id));
       await service.changePassword(user.id as number, actualPassword, newPassword);
       res.status(201).json({ message: "Password changed." });
     } catch (error) {
       next(error);
     }
-  }
-);
-
-router.get("/:userId/purchases",
-  validationHandler(getUserSchema, "params"),
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Return all user purchases.
-  }
-);
-
-router.get("/:userId/purchases/:purchaseId",
-  validationHandler(getUserSchema, "params"),
-  async (req: Request, res: Response, next: NextFunction) => {
-    // Return a purchase.
   }
 );
 

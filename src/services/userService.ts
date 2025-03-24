@@ -1,4 +1,4 @@
-import { ErrorPasswordNotMatch } from "../errors/ErrorPasswordNotMatch";
+import { PasswordError } from "../errors/PasswordError";
 import { IUser } from "../models/IUser";
 import { UserMP } from "../dal/UserMP";
 import { NotFoundError } from "../errors/NotFoundError";
@@ -38,10 +38,12 @@ export class UserService {
   public async changePassword(id: number, actualPassword: string, newPassword: string) {
     const user = await this.userMapper.getById(id);
     if (user) {
-      if (actualPassword !== newPassword) {
-        const result = await this.userMapper.updatePassword(id, newPassword);
-        if (result && result === 0) throw new DatabaseError("Failed to change password.");
-      } else throw new Error("The new password has to be different to the current.");
+      if (user.password === actualPassword) {
+        if (actualPassword !== newPassword) {
+          const result = await this.userMapper.updatePassword(id, newPassword);
+          if (result && result === 0) throw new DatabaseError("Failed to change password.");
+        } else throw new PasswordError("The new password has to be different to the current.");
+      } else throw new PasswordError("Wrong user/password. Try again.");
     }
   }
 
@@ -53,7 +55,14 @@ export class UserService {
 
   public async findById(id: number): Promise<IUser> {
     const result = await this.userMapper.getById(id);
-    if (result) return result;
+    if (result && result !== undefined) return result;
     else throw new NotFoundError(`User not found with ID: ${id}.`);
+  }
+
+  public async exists(id: number): Promise<boolean> {
+    const data = await this.userMapper.find(id);
+    let result = false;
+    if (data !== 0) result = true;
+    return result;
   }
 }

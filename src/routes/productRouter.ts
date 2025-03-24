@@ -19,7 +19,8 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/:id", validationHandler(getProductSchema, "params"),
+router.get("/:id",
+  validationHandler(getProductSchema, "params"),
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;

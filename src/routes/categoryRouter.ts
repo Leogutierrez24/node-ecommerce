@@ -3,6 +3,7 @@ import { CategoryService } from "../services/CategoryService";
 import { ICategory } from "../models/ICategory";
 import { createUpdateCategorySchema, getCategorySchema } from "../schemas/categorySchema";
 import { validationHandler } from "../middlewares/validationHandler";
+import { IProduct } from "../models/IProduct";
 
 const router = express.Router();
 const service = CategoryService.getInstance();

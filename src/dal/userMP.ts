@@ -26,11 +26,14 @@ export class UserMP extends Mapper<IUser> {
   public async getById(id: number): Promise<IUser | undefined> {
     const query = `SELECT * FROM users WHERE id = $1;`;
     const data = (await this.pool.query(query, [id])).rows[0];
-    const user = {
-      id: data.id,
-      email: data.email,
-      password: data.password
-    };
+    let user: IUser | undefined;
+    if (data) {
+      user = {
+        id: data.id,
+        email: data.email,
+        password: data.password
+      };
+    }
     return user;
   }
 
@@ -45,6 +48,12 @@ export class UserMP extends Mapper<IUser> {
     const data = await this.pool.query(query);
     const users = this.mapUsers(data.rows);
     return users;
+  }
+
+  public async find(id: number) {
+    const query = "SELECT id FROM users WHERE id = $1;";
+    const result = await this.pool.query(query, [id]);
+    return result.rowCount;
   }
 
   private mapUsers(rows: any[]): IUser[] {

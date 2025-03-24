@@ -5,7 +5,7 @@ const email = Joi.string().alphanum().min(5).max(20);
 const password = Joi.string();
 
 export const getUserSchema = Joi.object({
-  id: id.required()
+  userId: id.required()
 });
 
 export const createUserSchema = Joi.object({
@@ -15,5 +15,5 @@ export const createUserSchema = Joi.object({
 
 export const updatePasswordSchema = Joi.object({
   newPassword: password.required(),
-  oldPassword: password.required()
+  actualPassword: password.required()
 });
