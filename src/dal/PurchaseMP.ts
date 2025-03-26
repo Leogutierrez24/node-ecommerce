@@ -1,6 +1,5 @@
 import { Mapper } from "./Mapper";
 import { IPurchase } from "../models/IPurchase";
-import { ProductMP } from "./ProductMP";
 import { IPurchaseItem } from "../models/IPurchaseItem";
 import { IProduct } from "../models/IProduct";
 

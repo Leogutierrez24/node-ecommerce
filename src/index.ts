@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import { routerApi } from "./routes/index";
 import { errorHandler } from "./middlewares/errorHandler";
+import { checkApiKey } from "./middlewares/authHandler";
 import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
 
@@ -20,9 +21,12 @@ app.get("/api", (req: Request, res: Response) => {
   res.send("Hola, este es mi servidor en Express.");
 });
 
-app.get("/api/nueva-ruta", (req: Request, res: Response) => {
-  res.send("Soy un nuevo Endpoint");
-});
+app.get("/api/nueva-ruta",
+  checkApiKey,
+  (req: Request, res: Response) => {
+    res.send("Soy un nuevo Endpoint");
+  }
+);
 
 routerApi(app);
 

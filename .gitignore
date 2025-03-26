@@ -95,6 +95,7 @@ node_modules/
 jspm_packages/
 /dist
 diagramas/
+notas/
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
